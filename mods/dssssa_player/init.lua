@@ -1,4 +1,6 @@
 
+dssssa_player = {}
+
 if not minetest.is_singleplayer() then
 	error("Space-piracy-protection: You can only play this subgame in singleplayer-mode.", 5)
 end
@@ -40,4 +42,6 @@ minetest.register_on_joinplayer(function(player)
 	--   for enabling fly)
 	-- * only works in singleplayer
 	minetest.settings:set("free_move", "true")
+
+	dssssa_player.is_in_ship = false
 end)
