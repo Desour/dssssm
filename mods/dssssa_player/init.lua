@@ -122,6 +122,9 @@ minetest.register_on_joinplayer(function(player)
 		assert(inv:set_size("cpu_src", 3*4))
 		assert(inv:set_size("cpu_dst", 2*3))
 		assert(inv:set_size("gpu_src", 3*2))
+
+		inv:add_item("main", "dssssa_rocks:drill")
+		inv:add_item("main", "dssssa_rocks:stick")
 	else
 		dssssa_player.is_in_ship = false
 	end
