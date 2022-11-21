@@ -49,11 +49,17 @@ have to warn other ppl
 ]],
 }
 
+function dssssa_player.get_logbook_text()
+	local story_idx = modstorage:get_int("story_idx") or 2
+	return table.concat(log_entries, "\n", 1, story_idx)
+end
+
 minetest.register_on_joinplayer(function(player)
 	local first_join = modstorage:get("not_first_join") ~= "true"
 	if first_join then
 		modstorage:set_string("not_first_join", "true")
-		modstorage:set_string("ship_log", "...\n\n"..log_entries[1].."\n"..log_entries[2])
+		modstorage:set_int("story_idx", 2)
+		modstorage:set_int("fuel", 100)
 	end
 
 	player:set_properties({
@@ -105,6 +111,7 @@ minetest.register_on_joinplayer(function(player)
 		local inv = player:get_inventory()
 		assert(inv:set_size("cpu_src", 3*4))
 		assert(inv:set_size("cpu_dst", 2*3))
+		assert(inv:set_size("gpu_src", 3*2))
 	else
 		dssssa_player.is_in_ship = false
 	end
@@ -123,11 +130,11 @@ function dssssa_player.set_inventory_formspec(player)
 
 	if dssssa_player.is_in_ship then
 		fs = fs
-			.."tabheader[0,0;tabhdr;Logbook,Crafting,CPU,Steering;"..dssssa_player.current_inv_tab..";true;true]"
+			.."tabheader[0,0;tabhdr;Logbook,Crafting,CPU,GPU,Steering;"..dssssa_player.current_inv_tab..";true;true]"
 
 		if dssssa_player.current_inv_tab == 1 then -- logbook
 			fs = fs
-				.."textarea[0.25,0.25;9.75,9.5;;;"..minetest.formspec_escape(modstorage:get_string("ship_log")).."]"
+				.."textarea[0.25,0.25;9.75,9.5;;;"..minetest.formspec_escape(dssssa_player.get_logbook_text()).."]"
 		elseif dssssa_player.current_inv_tab == 2 then -- Crafting
 			fs = fs
 				.."list[current_player;main;0.25,5;8,4;0]"
@@ -137,14 +144,20 @@ function dssssa_player.set_inventory_formspec(player)
 		elseif dssssa_player.current_inv_tab == 3 then -- CPU
 			fs = fs
 				.."list[current_player;main;0.25,5;8,4;0]"
-				.."label[0.25,0.25;Crunching Processing Unit (CPU)]"
+				.."label[0.25,0.25;Crunching Processing Unit (CPU) - insert *all* sorts of rock to create gravel mix]"
 				.."list[current_player;cpu_src;0.25,0.5;4,3;0]"
 				.."list[current_player;cpu_dst;5.5,0.5;2,3;0]"
-		elseif dssssa_player.current_inv_tab == 4 then -- Steering
+		elseif dssssa_player.current_inv_tab == 4 then -- GPU
+			fs = fs
+				.."list[current_player;main;0.25,5;8,4;0]"
+				.."label[0.25,0.25;Gravel Processing Unit (GPU) - generate fuel from gravel mix]"
+				.."list[current_player;gpu_src;0.25,0.5;2,3;0]"
+				.."label[4,0.75;fuel:"..(modstorage:get_int("fuel") or 0).."]"
+		elseif dssssa_player.current_inv_tab == 5 then -- Steering
 			fs = fs
 				.."button[4,4;3,0.75;handbreak;Toggle handbreak]"
 				.."button[4,6;3,0.75;leave;Leave ship]"
-		--~ elseif dssssa_player.current_inv_tab == 5 then -- Ship-AI
+		--~ elseif dssssa_player.current_inv_tab == 6 then -- Ship-AI
 			--~ fs = fs
 		else
 			error("invalid dssssa_player.current_inv_tab: "..dssssa_player.current_inv_tab)
@@ -160,12 +173,12 @@ function dssssa_player.set_inventory_formspec(player)
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-	minetest.log(formname)
-	minetest.log(dump(fields))
+	--~ minetest.log(formname)
+	--~ minetest.log(dump(fields))
 
 	if fields.tabhdr then
 		local tab = math.floor(tonumber(fields.tabhdr) or 0) or 0
-		if tab >= 1 and tab <= 4 then
+		if tab >= 1 and tab <= 5 then
 			dssssa_player.current_inv_tab = tab
 			dssssa_player.set_inventory_formspec(player)
 			minetest.after(0, minetest.show_formspec, player:get_player_name(), "inv", player:get_inventory_formspec())

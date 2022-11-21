@@ -4,6 +4,43 @@ local ASTEREOIDS_PER_CHUNK = 10
 
 local BENCH_DIFFT = 1
 
+local modstorage = minetest.get_mod_storage()
+
+dssssa_mapgen = {}
+
+do
+	local stored_blackbox_poss = modstorage:get("blackbox_poss")
+	local blackbox_poss = {}
+
+	if stored_blackbox_poss then
+		stored_blackbox_poss = assert(minetest.deserialize(stored_blackbox_poss))
+		for i, p in ipairs(stored_blackbox_poss) do
+			blackbox_poss[i] = vector.copy(p) -- add metatable
+		end
+
+	else
+		local cseed = minetest.sha1(minetest.get_mapgen_setting("seed")..
+				"blackbox_poss", true)
+		local cseed_32 = string.byte(cseed, 1)
+				+ (2^8) * string.byte(cseed, 2)
+				+ (2^16) * string.byte(cseed, 3)
+				+ (2^24) * string.byte(cseed, 4)
+		local rand = PcgRandom(cseed_32)
+
+		while #blackbox_poss < 3 do
+			local x = rand:next(-500, 500)
+			local y = rand:next(-500, 500)
+			local z = rand:next(-500, 500)
+			local p = vector.new(x,y,z)
+			if p:length() < 500 or p:length() > 200 then
+				table.insert(blackbox_poss, p)
+			end
+		end
+	end
+
+	dssssa_mapgen.blackbox_poss = blackbox_poss
+end
+
 -- local CONTENT_ROCK = minetest.get_content_id("dssssa_rocks:rock1")
 
 -- NOTE lua magen is generally slow optimization can be done later
@@ -19,7 +56,7 @@ end
 
 local function small_asteroid(nodename, xm, ym, zm)
 	local data = {}
-	
+
 	-- flat table [z [y [x]]]
 	-- starts at 1 and not 0
 	for z = 1, zm, 1 do
@@ -33,7 +70,7 @@ local function small_asteroid(nodename, xm, ym, zm)
 	end
 	end
 	end
-	
+
 	return minetest.register_schematic({
 		size = {x=xm,y=ym,z=zm},
 		data = data
@@ -56,7 +93,7 @@ local function medium_asteroid(nodename, xm, ym, zm)
 	end
 	end
 	end
-	
+
 	return minetest.register_schematic({
 		size = {x=xm,y=ym,z=zm},
 		data = data
@@ -190,16 +227,16 @@ generate_chunk = function(chunk_pos, minp, maxp , vmanip --[[, varea]])
 		if vec_is_in(p, minp, maxp) then
 			-- set_node is by far faster than vmanip, but it still takes > 1 ms for a mapchunk
 			-- minetest.set_node(p, {name = "dssssa_rocks:rock1"})
-			
+
 			--vmanip:set_node_at(p, {name = "dssssa_rocks:rock1"})
 			--vmanip_data[varea:indexp(p)] = CONTENT_ROCK
-			
-			
+
+
 			-- maybe directly using minetest.place_schematic would be better
-			
+
 			-- this is not as fast as it could be
-			
-			
+
+
 			local rock = rand:next(1, 8)
 			if rock > 3 then
 				rock = rand:next(1, 8)
@@ -207,9 +244,9 @@ generate_chunk = function(chunk_pos, minp, maxp , vmanip --[[, varea]])
 			if rock > 6 then
 				rock = rand:next(1, 8)
 			end
-			
+
 			local size = rand:next(1, 7)
-			
+
 			if size <= 2 then
 				local rocks = rand:next(1, 3)
 				for i = 1, rocks, 1 do
@@ -244,6 +281,13 @@ generate_chunk = function(chunk_pos, minp, maxp , vmanip --[[, varea]])
 					})
 				end
 			end
+		end
+	end
+
+	-- blackboxes come last, because we don't want them to be overwritten
+	for i, p in ipairs(dssssa_mapgen) do
+		if vec_is_in(p, minp, maxp) then
+			minetest.set_node(p, "dssssa_rocks:blackbox")
 		end
 	end
 end

@@ -83,3 +83,13 @@ minetest.register_node("dssssa_rocks:rock8", {
 	paramtype2 = "none",
 	is_ground_content = false,
 })
+
+minetest.register_node("dssssa_rocks:blackbox", {
+	description = "Blackbox",
+	groups = {cracky = 4},
+	drawtype = "normal",
+	tiles = {"dssssa_rocks_blackbox.png"},
+	paramtype = "none",
+	paramtype2 = "none",
+	is_ground_content = false,
+})
