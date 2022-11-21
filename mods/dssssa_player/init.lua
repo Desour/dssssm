@@ -47,9 +47,14 @@ of the data if I find more blackboxes. My sensors already detected two more.
 [[
 Logbook of the captain, startime today (3):
 I have found a total of three blackboxes.
-cult of "those that seek the approval of Krock the core devourer" came to planet
-giant crocodile cracked planet like a nutcracker, then sucked up the core
-have to warn other ppl
+The stored information is alarming. It says that some cult, which calls itself
+"those that seek the approval of Krock, the core devourer" came to Giesela 235 C
+and demanded the scientists to praise their god. The scientists refused. Some
+days later a gigantic monster that looked like a crocodile arrived in the system,
+flew to the planet and cracked it like a nutcracker, it then sucked up the whole
+core.
+I have to warn the other planets nearby about my findings! I hope they'll believe
+me.
 ]],
 }
 
