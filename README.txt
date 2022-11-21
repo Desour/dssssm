@@ -18,3 +18,6 @@ MIT (Expat) by DS and cx384
 
 * model and textures in `mods/dssssa_ship`:
   by DS (CC-BY-SA-4.0)
+
+* player and wieldhand textures in `mods/dssssa_player/textures`:
+  by DS (CC-BY-SA-4.0)
