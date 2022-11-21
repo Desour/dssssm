@@ -51,7 +51,11 @@ have to warn other ppl
 
 function dssssa_player.get_logbook_text()
 	local story_idx = modstorage:get_int("story_idx") or 2
-	return table.concat(log_entries, "\n", 1, story_idx)
+	local seeable = {}
+	for i = story_idx, 1, -1 do -- newer ones up
+		table.insert(seeable, log_entries[i])
+	end
+	return table.concat(seeable, "\n", 1, story_idx)
 end
 
 minetest.register_on_joinplayer(function(player)
@@ -137,7 +141,7 @@ function dssssa_player.set_inventory_formspec(player)
 
 	if dssssa_player.is_in_ship then
 		fs = fs
-			.."tabheader[0,0;tabhdr;Logbook,Crafting,CPU,GPU,Steering;"..dssssa_player.current_inv_tab..";true;true]"
+			.."tabheader[0,0;tabhdr;Logbook,Crafting,CPU,GPGPU,GPU,Steering;"..dssssa_player.current_inv_tab..";true;true]"
 
 		if dssssa_player.current_inv_tab == 1 then -- logbook
 			fs = fs
@@ -147,34 +151,35 @@ function dssssa_player.set_inventory_formspec(player)
 				.."list[current_player;main;0.25,5;8,4;0]"
 				.."label[0.25,0.25;Craft]"
 				.."list[current_player;craft;0.25,0.5;3,3;0]"
+				.."listring[]"
 				.."list[current_player;craftpreview;4.25,0.5;1,1;0]"
 		elseif dssssa_player.current_inv_tab == 3 then -- CPU
 			fs = fs
 				.."list[current_player;main;0.25,5;8,4;0]"
 				.."label[0.25,0.25;Crunching Processing Unit (CPU) - insert *all* sorts of rock to create gravel mix]"
 				.."list[current_player;cpu_src;0.25,0.5;4,3;0]"
+				.."listring[]"
 				.."list[current_player;cpu_dst;5.5,0.5;2,3;0]"
-		elseif dssssa_player.current_inv_tab == 4 then -- GPU
-		--[[
+				.."listring[]"
+		elseif dssssa_player.current_inv_tab == 4 then -- GPGPU
 			fs = fs
 				.."list[current_player;main;0.25,5;8,4;0]"
-				.."label[0.25,0.25;Gravel Processing Unit (GPU) - generate fuel from gravel mix]"
+				.."label[0.25,0.25;Generate-Power Gravel Processing Unit (GPGPU) - generate fuel from gravel mix]"
 				.."list[current_player;gpu_src;0.25,0.5;2,3;0]"
-				.."label[4,0.75;fuel:"..(modstorage:get_int("fuel") or 0).."]"
-				]]
+				.."listring[]"
+				.."label[4,0.75;fuel:"..(modstorage:get_int("fuel") or 0).." (can't meassure while you look)]"
+		elseif dssssa_player.current_inv_tab == 5 then -- GPU
 			fs = fs .."list[current_player;main;0.25,5;8,4;0]"..
 				"label[1.5,0.5;Input asteroid rocks]"..
 				"list[current_player;gpu_in;1.5,1;2,3;]list[current_player;gpu_out;6.5,1;2,3;]"..
 				"listring[current_player;gpu_out]listring[current_player;main]listring[current_player;gpu_in]"..
 				"label[4.2,2;Parallelization "..meta:get_int("gpu_para").."]"..
 				"label[4.2,3;------------------->]"
-				
-				
-		elseif dssssa_player.current_inv_tab == 5 then -- Steering
+		elseif dssssa_player.current_inv_tab == 6 then -- Steering
 			fs = fs
 				.."button[4,4;3,0.75;handbreak;Toggle handbreak]"
-				.."button[4,6;3,0.75;leave;Leave ship]"
-		--~ elseif dssssa_player.current_inv_tab == 6 then -- Ship-AI
+				.."button_exit[4,6;3,0.75;leave;Leave ship]"
+		--~ elseif dssssa_player.current_inv_tab == 7 then -- Ship-AI
 			--~ fs = fs
 		else
 			error("invalid dssssa_player.current_inv_tab: "..dssssa_player.current_inv_tab)
@@ -196,7 +201,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	if fields.tabhdr then
 		local tab = math.floor(tonumber(fields.tabhdr) or 0) or 0
-		if tab >= 1 and tab <= 5 then
+		if tab >= 1 and tab <= 6 then
 			if tab == 4 then
 				meta:set_string("gpu_open", "true")
 			end
@@ -213,8 +218,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if fields.leave then
 		dssssa_ship.out_of_ship(player)
 	end
-	
-	if fields.quit then 
+
+	if fields.quit then
 		meta:set_string("gpu_open", "")
 	end
 end)
@@ -234,7 +239,7 @@ minetest.register_allow_player_inventory_action(function(player, action, invento
 	return inventory_info.stack:get_count()
 end)]]
 
-local gpu_speed = 3 -- in seconds 
+local gpu_speed = 3 -- in seconds
 local gtime = 0
 minetest.register_globalstep(function(dtime)
 	if gtime <= gpu_speed then
@@ -244,7 +249,7 @@ minetest.register_globalstep(function(dtime)
 	gtime = 0
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local inv = minetest.get_inventory({type="player", name=player:get_player_name()})
-		
+
 		local meta = player:get_meta()
 		local para = meta:get_int("gpu_para")
 		local process_failed = false
@@ -258,13 +263,13 @@ minetest.register_globalstep(function(dtime)
 					break
 				end
 			end
-			
+
 			if not res_all or not next(res_all) then
 				process_failed = true
 				break
 			end
-			
-			
+
+
 			-- check is good enough for now TODO
 			for item, count in pairs(res_all) do
 				local stack = ItemStack(item)
@@ -274,11 +279,11 @@ minetest.register_globalstep(function(dtime)
 					break
 				end
 			end
-			
+
 			if process_failed then
 				break
 			end
-			
+
 			for item, count in pairs(dssssa_crafting.get_processing_results(name)) do
 				local stack = ItemStack(item)
 				stack:set_count(count)
@@ -291,11 +296,63 @@ minetest.register_globalstep(function(dtime)
 		else
 			meta:set_int("gpu_para", para+1)
 		end
-		
+
 		if meta:get_string("gpu_open") ~= "" then
 			dssssa_player.set_inventory_formspec(player)
 			minetest.after(0, minetest.show_formspec, player:get_player_name(), "inv", player:get_inventory_formspec())
 		end
 	end
-	
+
+end)
+
+local cpu_time_accum = 0
+local gpu_time_accum = 0
+minetest.register_globalstep(function(dtime)
+	local inv = minetest.get_inventory({type="player", name="singleplayer"})
+
+	cpu_time_accum = cpu_time_accum + dtime
+	gpu_time_accum = gpu_time_accum + dtime
+
+	if cpu_time_accum > 3 then
+		cpu_time_accum = math.min(1, cpu_time_accum - 3)
+
+		local has_all_types = true
+		for rockt = 1, 8 do
+			if not inv:contains_item("cpu_src", "dssssa_rocks:rock"..rockt) then
+				has_all_types = false
+				break
+			end
+		end
+
+		if has_all_types then
+			for rockt = 1, 8 do
+				inv:remove_item("cpu_src", "dssssa_rocks:rock"..rockt)
+			end
+
+			inv:add_item("cpu_dst", "dssssa_rocks:gravel")
+		end
+	end
+
+	if gpu_time_accum > 2 then
+		gpu_time_accum = math.min(1, gpu_time_accum - 2)
+
+		if inv:contains_item("gpu_src", "dssssa_rocks:gravel") then
+			inv:remove_item("gpu_src", "dssssa_rocks:gravel")
+
+			local fuel = modstorage:get_int("fuel") or 0
+			fuel = fuel + 50
+			modstorage:set_int("fuel", fuel)
+
+			if fuel >= 500 and modstorage:get_int("story_idx") == 2 then
+				modstorage:set_int("story_idx", 3)
+				dssssa_player.current_inv_tab = 1 -- to logbook
+				local player = minetest.get_player_by_name("singleplayer")
+				dssssa_player.set_inventory_formspec(player)
+
+				if dssssa_player.is_in_ship then
+					minetest.show_formspec(player:get_player_name(), "inv", player:get_inventory_formspec())
+				end
+			end
+		end
+	end
 end)

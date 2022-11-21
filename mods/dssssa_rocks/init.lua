@@ -93,3 +93,9 @@ minetest.register_node("dssssa_rocks:blackbox", {
 	paramtype2 = "none",
 	is_ground_content = false,
 })
+
+minetest.register_craftitem("dssssa_rocks:gravel", {
+	description = "Gravel mix",
+	groups = {},
+	inventory_image = "dssssa_rocks_gravel.png",
+})
