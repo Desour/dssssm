@@ -42,6 +42,12 @@ function dssssa_ship.out_of_ship(player)
 		return false
 	end
 
+	if self.object:get_velocity():length() > 2 then
+		minetest.chat_send_player(player:get_player_name(),
+				"The doors won't open at these speeds (thanks to the ship manufacturer's suicide-prevention technology (TM)).")
+		return false
+	end
+
 	self.driver_name = nil
 
 	-- detach the driver

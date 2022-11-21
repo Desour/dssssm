@@ -101,6 +101,10 @@ minetest.register_on_joinplayer(function(player)
 	if first_join then
 		dssssa_ship.ship = assert(minetest.add_entity(player:get_pos(), "dssssa_ship:ship")):get_luaentity()
 		dssssa_ship.into_ship(player)
+
+		local inv = player:get_inventory()
+		assert(inv:set_size("cpu_src", 3*4))
+		assert(inv:set_size("cpu_dst", 2*3))
 	else
 		dssssa_player.is_in_ship = false
 	end
@@ -119,19 +123,29 @@ function dssssa_player.set_inventory_formspec(player)
 
 	if dssssa_player.is_in_ship then
 		fs = fs
-			.."tabheader[0,0;tabhdr;Logbook,Crafting,Steering,Ship-AI;"..dssssa_player.current_inv_tab..";true;true]"
+			.."tabheader[0,0;tabhdr;Logbook,Crafting,CPU,Steering;"..dssssa_player.current_inv_tab..";true;true]"
 
 		if dssssa_player.current_inv_tab == 1 then -- logbook
 			fs = fs
+				.."textarea[0.25,0.25;9.75,9.5;;;"..minetest.formspec_escape(modstorage:get_string("ship_log")).."]"
 		elseif dssssa_player.current_inv_tab == 2 then -- Crafting
 			fs = fs
 				.."list[current_player;main;0.25,5;8,4;0]"
-		elseif dssssa_player.current_inv_tab == 3 then -- Steering
+				.."label[0.25,0.25;Craft]"
+				.."list[current_player;craft;0.25,0.5;3,3;0]"
+				.."list[current_player;craftpreview;4.25,0.5;1,1;0]"
+		elseif dssssa_player.current_inv_tab == 3 then -- CPU
+			fs = fs
+				.."list[current_player;main;0.25,5;8,4;0]"
+				.."label[0.25,0.25;Crunching Processing Unit (CPU)]"
+				.."list[current_player;cpu_src;0.25,0.5;4,3;0]"
+				.."list[current_player;cpu_dst;5.5,0.5;2,3;0]"
+		elseif dssssa_player.current_inv_tab == 4 then -- Steering
 			fs = fs
 				.."button[4,4;3,0.75;handbreak;Toggle handbreak]"
 				.."button[4,6;3,0.75;leave;Leave ship]"
-		elseif dssssa_player.current_inv_tab == 4 then -- Ship-AI
-			fs = fs
+		--~ elseif dssssa_player.current_inv_tab == 5 then -- Ship-AI
+			--~ fs = fs
 		else
 			error("invalid dssssa_player.current_inv_tab: "..dssssa_player.current_inv_tab)
 		end
