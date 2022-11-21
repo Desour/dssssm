@@ -1,11 +1,9 @@
 
-* menu music
+* menu music?
 * better mapgen
-* ship
-* player tex
 * blackbox
 * fuel
-* antennas
+* antennas (or not)
 * drift drive
 * jump drive (tripple jmp)
 * drill on a stick

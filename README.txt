@@ -21,3 +21,9 @@ MIT (Expat) by DS and cx384
 
 * player and wieldhand textures in `mods/dssssa_player/textures`:
   by DS (CC-BY-SA-4.0)
+
+* `mods/dssssa_player/sounds/dssssa_music.ogg`:
+  "Space 1990-B" Kevin MacLeod (incompetech.com)
+  Licensed under Creative Commons: By Attribution 4.0 License
+  http://creativecommons.org/licenses/by/4.0/
+  (modified trivially by DS for looping)

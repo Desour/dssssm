@@ -93,6 +93,11 @@ minetest.register_on_joinplayer(function(player)
 	-- * only works in singleplayer
 	minetest.settings:set("free_move", "true")
 
+	minetest.after(0, function()
+		minetest.sound_play("dssssa_music", {fade = 0.05, gain = 0.3,
+				to_player = name, loop = true}, false)
+	end)
+
 	if first_join then
 		dssssa_ship.ship = assert(minetest.add_entity(player:get_pos(), "dssssa_ship:ship")):get_luaentity()
 		dssssa_ship.into_ship(player)
