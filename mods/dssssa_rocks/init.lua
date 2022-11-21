@@ -1,7 +1,7 @@
 
 minetest.register_node("dssssa_rocks:rock1", {
 	description = "Light Gray Rock",
-	groups = {cracky = 2},
+	groups = {cracky = 1, rawrock = 1},
 	drawtype = "normal",
 	tiles = {"dssssa_rocks_rock1.png"},
 	paramtype = "none",
@@ -16,7 +16,7 @@ minetest.register_node("dssssa_rocks:rock1", {
 
 minetest.register_node("dssssa_rocks:rock2", {
 	description = "Gray Rock",
-	groups = {cracky = 3},
+	groups = {cracky = 2, rawrock = 1},
 	drawtype = "normal",
 	tiles = {"dssssa_rocks_rock2.png"},
 	paramtype = "none",
@@ -26,7 +26,7 @@ minetest.register_node("dssssa_rocks:rock2", {
 
 minetest.register_node("dssssa_rocks:rock3", {
 	description = "Dark Gray Rock",
-	groups = {cracky = 4},
+	groups = {cracky = 3, rawrock = 1},
 	drawtype = "normal",
 	tiles = {"dssssa_rocks_rock3.png"},
 	paramtype = "none",
@@ -36,7 +36,7 @@ minetest.register_node("dssssa_rocks:rock3", {
 
 minetest.register_node("dssssa_rocks:rock4", {
 	description = "Yellow Rock",
-	groups = {cracky = 2},
+	groups = {cracky = 1, rawrock = 1},
 	drawtype = "normal",
 	tiles = {"dssssa_rocks_rock4.png"},
 	paramtype = "none",
@@ -46,7 +46,7 @@ minetest.register_node("dssssa_rocks:rock4", {
 
 minetest.register_node("dssssa_rocks:rock5", {
 	description = "Light Blue Rock",
-	groups = {cracky = 4},
+	groups = {cracky = 3, rawrock = 1},
 	drawtype = "normal",
 	tiles = {"dssssa_rocks_rock5.png"},
 	paramtype = "none",
@@ -56,7 +56,7 @@ minetest.register_node("dssssa_rocks:rock5", {
 
 minetest.register_node("dssssa_rocks:rock6", {
 	description = "Red Rock",
-	groups = {cracky = 3},
+	groups = {cracky = 2, rawrock = 1},
 	drawtype = "normal",
 	tiles = {"dssssa_rocks_rock6.png"},
 	paramtype = "none",
@@ -66,7 +66,7 @@ minetest.register_node("dssssa_rocks:rock6", {
 
 minetest.register_node("dssssa_rocks:rock7", {
 	description = "Dark Blue Rock",
-	groups = {cracky = 3},
+	groups = {cracky = 2, rawrock = 1},
 	drawtype = "normal",
 	tiles = {"dssssa_rocks_rock7.png"},
 	paramtype = "none",
@@ -76,7 +76,7 @@ minetest.register_node("dssssa_rocks:rock7", {
 
 minetest.register_node("dssssa_rocks:rock8", {
 	description = "Cyan Rock",
-	groups = {cracky = 4},
+	groups = {cracky = 3, rawrock = 1},
 	drawtype = "normal",
 	tiles = {"dssssa_rocks_rock8.png"},
 	paramtype = "none",

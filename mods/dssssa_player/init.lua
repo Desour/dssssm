@@ -55,6 +55,12 @@ function dssssa_player.get_logbook_text()
 end
 
 minetest.register_on_joinplayer(function(player)
+	local inv = minetest.get_inventory({type="player", name=player:get_player_name()})
+	inv:set_size("gpu_in", 6)
+	inv:set_size("gpu_out", 6)
+	local meta = player:get_meta()
+	meta:set_int("gpu_para", 1)
+
 	local first_join = modstorage:get("not_first_join") ~= "true"
 	if first_join then
 		modstorage:set_string("not_first_join", "true")
@@ -125,6 +131,7 @@ minetest.register_on_joinplayer(function(player)
 end)
 
 function dssssa_player.set_inventory_formspec(player)
+	local meta = player:get_meta()
 	local fs = "formspec_version[6]"
 			.."size[10.25,10]"
 
@@ -148,11 +155,21 @@ function dssssa_player.set_inventory_formspec(player)
 				.."list[current_player;cpu_src;0.25,0.5;4,3;0]"
 				.."list[current_player;cpu_dst;5.5,0.5;2,3;0]"
 		elseif dssssa_player.current_inv_tab == 4 then -- GPU
+		--[[
 			fs = fs
 				.."list[current_player;main;0.25,5;8,4;0]"
 				.."label[0.25,0.25;Gravel Processing Unit (GPU) - generate fuel from gravel mix]"
 				.."list[current_player;gpu_src;0.25,0.5;2,3;0]"
 				.."label[4,0.75;fuel:"..(modstorage:get_int("fuel") or 0).."]"
+				]]
+			fs = fs .."list[current_player;main;0.25,5;8,4;0]"..
+				"label[1.5,0.5;Input asteroid rocks]"..
+				"list[current_player;gpu_in;1.5,1;2,3;]list[current_player;gpu_out;6.5,1;2,3;]"..
+				"listring[current_player;gpu_out]listring[current_player;main]listring[current_player;gpu_in]"..
+				"label[4.2,2;Parallelization "..meta:get_int("gpu_para").."]"..
+				"label[4.2,3;------------------->]"
+				
+				
 		elseif dssssa_player.current_inv_tab == 5 then -- Steering
 			fs = fs
 				.."button[4,4;3,0.75;handbreak;Toggle handbreak]"
@@ -175,10 +192,14 @@ end
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	--~ minetest.log(formname)
 	--~ minetest.log(dump(fields))
+	local meta = player:get_meta()
 
 	if fields.tabhdr then
 		local tab = math.floor(tonumber(fields.tabhdr) or 0) or 0
 		if tab >= 1 and tab <= 5 then
+			if tab == 4 then
+				meta:set_string("gpu_open", "true")
+			end
 			dssssa_player.current_inv_tab = tab
 			dssssa_player.set_inventory_formspec(player)
 			minetest.after(0, minetest.show_formspec, player:get_player_name(), "inv", player:get_inventory_formspec())
@@ -192,4 +213,89 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if fields.leave then
 		dssssa_ship.out_of_ship(player)
 	end
+	
+	if fields.quit then 
+		meta:set_string("gpu_open", "")
+	end
+end)
+
+
+--[[
+minetest.register_allow_player_inventory_action(function(player, action, inventory, inventory_info)
+	if (action == "move" or action == "put") and
+			(inventory_info.listname == "gpu_out" or
+			inventory_info.to_list == "gpu_out" or
+			inventory_info.from_list == "gpu_out") then
+		return 0
+	end
+	if action == "move" then
+		return inventory_info.count
+	end
+	return inventory_info.stack:get_count()
+end)]]
+
+local gpu_speed = 3 -- in seconds 
+local gtime = 0
+minetest.register_globalstep(function(dtime)
+	if gtime <= gpu_speed then
+		gtime = gtime + dtime
+		return
+	end
+	gtime = 0
+	for _, player in ipairs(minetest.get_connected_players()) do
+		local inv = minetest.get_inventory({type="player", name=player:get_player_name()})
+		
+		local meta = player:get_meta()
+		local para = meta:get_int("gpu_para")
+		local process_failed = false
+		for i = 1, para, 1 do
+			local name
+			local res_all
+			for _, stack in ipairs(inv:get_list("gpu_in")) do
+				name = stack:get_name()
+				res_all = dssssa_crafting.get_max_processing_results(name)
+				if name ~= "" and next(res_all) then
+					break
+				end
+			end
+			
+			if not res_all or not next(res_all) then
+				process_failed = true
+				break
+			end
+			
+			
+			-- check is good enough for now TODO
+			for item, count in pairs(res_all) do
+				local stack = ItemStack(item)
+				stack:set_count(count)
+				if not inv:room_for_item("gpu_out", stack) then
+					process_failed = true
+					break
+				end
+			end
+			
+			if process_failed then
+				break
+			end
+			
+			for item, count in pairs(dssssa_crafting.get_processing_results(name)) do
+				local stack = ItemStack(item)
+				stack:set_count(count)
+				inv:remove_item("gpu_in", name)
+				inv:add_item("gpu_out", stack)
+			end
+		end
+		if process_failed then
+			meta:set_int("gpu_para", 1)
+		else
+			meta:set_int("gpu_para", para+1)
+		end
+		
+		if meta:get_string("gpu_open") ~= "" then
+			dssssa_player.set_inventory_formspec(player)
+			minetest.after(0, minetest.show_formspec, player:get_player_name(), "inv", player:get_inventory_formspec())
+		end
+	end
+	
 end)
