@@ -219,6 +219,46 @@ end)
 ]]
 
 
+-- this should not be here
+
+minetest.register_tool("dssssa_crafting:drill_stick", {
+	description = "Drill on a stick",
+	inventory_image = "dssssa_crafting_drill_stick.png",
+	tool_capabilities = {
+		full_punch_interval = 0.5,
+		groupcaps={
+			cracky = {times={[1]=0.1, [2]=0.2, [3]=0.3}, uses=30, maxlevel=3},
+		},
+	},
+})
+
+minetest.register_craftitem("dssssa_crafting:stick", {
+	description = "Stick",
+	inventory_image = "dssssa_crafting_stick.png",
+})
+
+minetest.register_craftitem("dssssa_crafting:drill", {
+	description = "Drill (It has no handle)",
+	inventory_image = "dssssa_crafting_drill.png",
+})
+
+minetest.register_craft({
+	type = "shapeless",
+	output = "dssssa_crafting:drill_stick",
+	recipe = {"dssssa_crafting:drill", "dssssa_crafting:stick"}
+})
+
+local modstorage = minetest.get_mod_storage()
+
+minetest.register_on_joinplayer(function(player)
+	local inv = minetest.get_inventory({type="player", name=player:get_player_name()})
+	local first_join = modstorage:get("not_first_join") ~= "true"
+	if first_join then
+		inv:add_item("main", "dssssa_crafting:drill")
+		inv:add_item("main", "dssssa_crafting:stick")
+	end
+end)
+
 
 
 

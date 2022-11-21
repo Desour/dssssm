@@ -173,7 +173,7 @@ function dssssa_player.set_inventory_formspec(player)
 				.."label[4,0.75;fuel:"..(modstorage:get_int("fuel") or 0).." (can't meassure while you look)]"
 		elseif dssssa_player.current_inv_tab == 5 then -- GPU
 			fs = fs .."list[current_player;main;0.25,5;8,4;0]"..
-				"label[1.5,0.5;Input asteroid rocks]"..
+				"label[1.5,0.5;Input asteroid rocks (it works)]"..
 				"list[current_player;gpu_in;1.5,1;2,3;]list[current_player;gpu_out;6.5,1;2,3;]"..
 				"listring[current_player;gpu_out]listring[current_player;main]listring[current_player;gpu_in]"..
 				"label[4.2,2;Parallelization "..meta:get_int("gpu_para").."]"..
@@ -190,8 +190,8 @@ function dssssa_player.set_inventory_formspec(player)
 
 	else
 		-- only invlist
-		fs = fs
-			.."list[current_player;main;0.25,5;8,4;0]"
+		fs = fs.."size[10.25,5.5]"
+			.."list[current_player;main;0.25,0.25;8,4;0]"
 	end
 
 	player:set_inventory_formspec(fs)
