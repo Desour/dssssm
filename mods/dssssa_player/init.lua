@@ -351,8 +351,36 @@ minetest.register_globalstep(function(dtime)
 
 				if dssssa_player.is_in_ship then
 					minetest.show_formspec(player:get_player_name(), "inv", player:get_inventory_formspec())
+
+					dssssa_player.add_waypoints(player)
 				end
 			end
 		end
 	end
 end)
+
+function dssssa_player.add_waypoints(player)
+	dssssa_player.remove_waypoints(player)
+
+	local story_idx = modstorage:get_int("story_idx")
+
+	if story_idx == 3 then
+		dssssa_player.hud_blackboxes = {assert(player:hud_add({
+				hud_elem_type = "waypoint",
+				name = "blackbox1",
+				text = "Blackbox",
+				number = 0xF41616,
+				world_pos = dssssa_mapgen.blackbox_poss[1],
+			}))}
+	end
+end
+
+function dssssa_player.remove_waypoints(player)
+	if not dssssa_player.hud_blackboxes then
+		return
+	end
+	for _, id in ipairs(dssssa_player.hud_blackboxes) do
+		player:hud_remove(id)
+	end
+	dssssa_player.hud_blackboxes = {}
+end

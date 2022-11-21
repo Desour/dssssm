@@ -28,6 +28,8 @@ function dssssa_ship.into_ship(player)
 	hud_flags.wielditem = false
 	player:hud_set_flags(hud_flags)
 
+	dssssa_player.add_waypoints(player)
+
 	return true
 end
 
@@ -61,6 +63,8 @@ function dssssa_ship.out_of_ship(player)
 	local hud_flags = player:hud_get_flags()
 	hud_flags.wielditem = true
 	player:hud_set_flags(hud_flags)
+
+	dssssa_player.remove_waypoints(player)
 
 	return true
 end

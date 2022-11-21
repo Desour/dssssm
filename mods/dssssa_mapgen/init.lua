@@ -285,9 +285,9 @@ generate_chunk = function(chunk_pos, minp, maxp , vmanip --[[, varea]])
 	end
 
 	-- blackboxes come last, because we don't want them to be overwritten
-	for i, p in ipairs(dssssa_mapgen) do
+	for i, p in ipairs(dssssa_mapgen.blackbox_poss) do
 		if vec_is_in(p, minp, maxp) then
-			minetest.set_node(p, "dssssa_rocks:blackbox")
+			minetest.set_node(p, {name = "dssssa_rocks:blackbox"})
 		end
 	end
 end
