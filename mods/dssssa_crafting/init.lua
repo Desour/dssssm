@@ -1,4 +1,4 @@
--- item definition 
+-- item definition
 
 
 minetest.register_craftitem("dssssa_crafting:metal", {
@@ -23,7 +23,7 @@ dssssa_crafting = {}
 -- not globally available for now
 local processing_results = {}
 local processing_results_group = {}
---local gpu_speed = 3 -- in seconds 
+--local gpu_speed = 3 -- in seconds
 
 processing_results_group["rawrock"] = {
 	{name = "dssssa_crafting:metal", chance = 0.2},
@@ -41,12 +41,12 @@ function dssssa_crafting.get_processing_results(name)
 			end
 		end
 	end
-	
+
 	local ret = {}
 	if not res then
 		return ret
 	end
-	
+
 	for _, t in ipairs(res) do
 		if math.random() >= t.chance then
 			if not ret[t.name] then
@@ -73,12 +73,12 @@ function dssssa_crafting.get_max_processing_results(name)
 			end
 		end
 	end
-	
+
 	local ret = {}
 	if not res then
 		return ret
 	end
-	
+
 	for _, t in ipairs(res) do
 		if not ret[t.name] then
 			ret[t.name] = 0
@@ -89,7 +89,7 @@ function dssssa_crafting.get_max_processing_results(name)
 			ret[t.name] = ret[t.name] + 1
 		end
 	end
-	
+
 	return ret
 end
 
@@ -120,7 +120,7 @@ local function get_player_fromspec(tab, player)
 		return "size[8,7.5]"..
 			"tabheader[0,0;playinvtab;CPU,GPU,AI,Status;"..tab..";true;true>]"
 	end
-	
+
 	return ""
 end
 
@@ -135,7 +135,7 @@ minetest.register_allow_player_inventory_action(function(player, action, invento
 		return inventory_info.count
 	end
 	return inventory_info.stack:get_count()
-	
+
 end)
 
 minetest.register_on_joinplayer(function(player)
@@ -165,7 +165,7 @@ minetest.register_globalstep(function(dtime)
 	gtime = 0
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local inv = minetest.get_inventory({type="player", name=player:get_player_name()})
-		
+
 		local meta = player:get_meta()
 		local para = meta:get_int("gpu_para")
 		local process_failed = false
@@ -179,13 +179,13 @@ minetest.register_globalstep(function(dtime)
 					break
 				end
 			end
-			
+
 			if not res_all or not next(res_all) then
 				process_failed = true
 				break
 			end
-			
-			
+
+
 			-- check is good enough for now TODO
 			for item, count in pairs(res_all) do
 				local stack = ItemStack(item)
@@ -195,11 +195,11 @@ minetest.register_globalstep(function(dtime)
 					break
 				end
 			end
-			
+
 			if process_failed then
 				break
 			end
-			
+
 			for item, count in pairs(dssssa_crafting.get_processing_results(name)) do
 				local stack = ItemStack(item)
 				stack:set_count(count)
@@ -212,7 +212,7 @@ minetest.register_globalstep(function(dtime)
 			meta:set_int("gpu_para", para+1)
 		end
 	end
-	
+
 end)
 
 
@@ -221,43 +221,43 @@ end)
 
 -- this should not be here
 
-minetest.register_tool("dssssa_crafting:drill_stick", {
-	description = "Drill on a stick",
-	inventory_image = "dssssa_crafting_drill_stick.png",
-	tool_capabilities = {
-		full_punch_interval = 0.5,
-		groupcaps={
-			cracky = {times={[1]=0.1, [2]=0.2, [3]=0.3}, uses=30, maxlevel=3},
-		},
-	},
-})
+--~ minetest.register_tool("dssssa_crafting:drill_stick", {
+	--~ description = "Drill on a stick",
+	--~ inventory_image = "dssssa_crafting_drill_stick.png",
+	--~ tool_capabilities = {
+		--~ full_punch_interval = 0.5,
+		--~ groupcaps={
+			--~ cracky = {times={[1]=0.1, [2]=0.2, [3]=0.3}, uses=30, maxlevel=3},
+		--~ },
+	--~ },
+--~ })
 
-minetest.register_craftitem("dssssa_crafting:stick", {
-	description = "Stick",
-	inventory_image = "dssssa_crafting_stick.png",
-})
+--~ minetest.register_craftitem("dssssa_crafting:stick", {
+	--~ description = "Stick",
+	--~ inventory_image = "dssssa_crafting_stick.png",
+--~ })
 
-minetest.register_craftitem("dssssa_crafting:drill", {
-	description = "Drill (It has no handle)",
-	inventory_image = "dssssa_crafting_drill.png",
-})
+--~ minetest.register_craftitem("dssssa_crafting:drill", {
+	--~ description = "Drill (It has no handle)",
+	--~ inventory_image = "dssssa_crafting_drill.png",
+--~ })
 
-minetest.register_craft({
-	type = "shapeless",
-	output = "dssssa_crafting:drill_stick",
-	recipe = {"dssssa_crafting:drill", "dssssa_crafting:stick"}
-})
+--~ minetest.register_craft({
+	--~ type = "shapeless",
+	--~ output = "dssssa_crafting:drill_stick",
+	--~ recipe = {"dssssa_crafting:drill", "dssssa_crafting:stick"}
+--~ })
 
-local modstorage = minetest.get_mod_storage()
+--~ local modstorage = minetest.get_mod_storage()
 
-minetest.register_on_joinplayer(function(player)
-	local inv = minetest.get_inventory({type="player", name=player:get_player_name()})
-	local first_join = modstorage:get("not_first_join") ~= "true"
-	if first_join then
-		inv:add_item("main", "dssssa_crafting:drill")
-		inv:add_item("main", "dssssa_crafting:stick")
-	end
-end)
+--~ minetest.register_on_joinplayer(function(player)
+	--~ local inv = minetest.get_inventory({type="player", name=player:get_player_name()})
+	--~ local first_join = modstorage:get("not_first_join") ~= "true"
+	--~ if first_join then
+		--~ inv:add_item("main", "dssssa_crafting:drill")
+		--~ inv:add_item("main", "dssssa_crafting:stick")
+	--~ end
+--~ end)
 
 
 
