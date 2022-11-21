@@ -1,6 +1,31 @@
 
 local max_speed = 30
 
+dssssa_ship = {}
+
+function dssssa_ship.into_ship(player)
+	local self = dssssa_ship.ship
+
+	if not self then
+		return false
+	end
+
+	if self.driver_name then
+		return false
+	end
+
+	self.driver_name = player:get_player_name()
+
+	-- attach the driver
+	player:set_attach(self.object, "", vector.zero(), vector.zero())
+	player:set_eye_offset(vector.new(0, 50, -40), vector.new(0, 30, 0))
+	dssssa_player.is_in_ship = true
+	dssssa_player.current_inv_tab = 1
+	dssssa_player.set_inventory_formspec(player)
+
+	return true
+end
+
 minetest.register_entity("dssssa_ship:ship", {
 	initial_properties = {
 		physical = true,
@@ -16,11 +41,14 @@ minetest.register_entity("dssssa_ship:ship", {
 	handbreak = false,
 
 	on_activate = function(self)
+		dssssa_ship.ship = self
 		self.object:set_armor_groups({immortal=1})
 		self.handbreak = true
 	end,
 
 	on_step = function(self, dtime)
+		dssssa_ship.ship = self -- >:)
+
 		local driver = nil
 		if self.driver_name then
 			driver = minetest.get_player_by_name(self.driver_name)
@@ -92,15 +120,6 @@ minetest.register_entity("dssssa_ship:ship", {
 			return
 		end
 
-		if self.driver_name then
-			return
-		end
-
-		self.driver_name = clicker:get_player_name()
-
-		-- attach the driver
-		clicker:set_attach(self.object, "", vector.zero(), vector.zero())
-		clicker:set_eye_offset(vector.new(0, 50, -40), vector.new(0, 30, 0))
-		dssssa_player.is_in_ship = true
+		dssssa_ship.into_ship(clicker)
 	end,
 })
