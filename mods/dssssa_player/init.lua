@@ -128,8 +128,8 @@ function dssssa_player.set_inventory_formspec(player)
 				.."list[current_player;main;0.25,5;8,4;0]"
 		elseif dssssa_player.current_inv_tab == 3 then -- Steering
 			fs = fs
-				.."button[4,4;2,1;handbreak;Toggle handbreak]"
-				.."button[4,6;2,1;leave;Leave ship]"
+				.."button[4,4;3,0.75;handbreak;Toggle handbreak]"
+				.."button[4,6;3,0.75;leave;Leave ship]"
 		elseif dssssa_player.current_inv_tab == 4 then -- Ship-AI
 			fs = fs
 		else
@@ -156,5 +156,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			dssssa_player.set_inventory_formspec(player)
 			minetest.after(0, minetest.show_formspec, player:get_player_name(), "inv", player:get_inventory_formspec())
 		end
+	end
+
+	if fields.handbreak then
+		dssssa_ship.ship.handbreak = not dssssa_ship.ship.handbreak
+	end
+
+	if fields.leave then
+		dssssa_ship.out_of_ship(player)
 	end
 end)

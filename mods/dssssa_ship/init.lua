@@ -20,8 +20,41 @@ function dssssa_ship.into_ship(player)
 	player:set_attach(self.object, "", vector.zero(), vector.zero())
 	player:set_eye_offset(vector.new(0, 50, -40), vector.new(0, 30, 0))
 	dssssa_player.is_in_ship = true
+
 	dssssa_player.current_inv_tab = 1
 	dssssa_player.set_inventory_formspec(player)
+
+	local hud_flags = player:hud_get_flags()
+	hud_flags.wielditem = false
+	player:hud_set_flags(hud_flags)
+
+	return true
+end
+
+function dssssa_ship.out_of_ship(player)
+	local self = dssssa_ship.ship
+
+	if not self then
+		return false
+	end
+
+	if not self.driver_name then
+		return false
+	end
+
+	self.driver_name = nil
+
+	-- detach the driver
+	player:set_detach()
+	player:set_eye_offset(vector.new(0, 0, 0), vector.new(0, 0, 0))
+	dssssa_player.is_in_ship = false
+
+	dssssa_player.current_inv_tab = 1
+	dssssa_player.set_inventory_formspec(player)
+
+	local hud_flags = player:hud_get_flags()
+	hud_flags.wielditem = true
+	player:hud_set_flags(hud_flags)
 
 	return true
 end
