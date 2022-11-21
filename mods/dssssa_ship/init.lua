@@ -30,6 +30,8 @@ function dssssa_ship.into_ship(player)
 
 	dssssa_player.add_waypoints(player)
 
+	dssssa_player.into_ship_hook(player)
+
 	return true
 end
 

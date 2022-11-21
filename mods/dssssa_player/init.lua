@@ -34,15 +34,19 @@ those.
 ]],
 [[
 Logbook of the captain, startime today (1):
-enoguh power => detect signal of blackbox
+Now, as I've gathered more power, I was able to turn on my sensors, which in turn
+detected the signal of a blackbox. I should investigate this.
 ]],
 [[
 Logbook of the captain, startime today (2):
-blackbox broken, uses RAID, search more
+I've brought the blackbox to my ship, however it is heavily damaged. According to
+the blackbox's manual (I've found them in my ship's database), the information is
+stored redundantly on multiple blackboxes, so I should be able to reconstruct most
+of the data if I find more blackboxes. My sensors already detected two more.
 ]],
 [[
 Logbook of the captain, startime today (3):
-found 3 blackboxes
+I have found a total of three blackboxes.
 cult of "those that seek the approval of Krock the core devourer" came to planet
 giant crocodile cracked planet like a nutcracker, then sucked up the core
 have to warn other ppl
@@ -218,6 +222,18 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		dssssa_ship.ship.handbreak = not dssssa_ship.ship.handbreak
 	end
 
+	if fields.jump then
+		if modstorage:get_int("fuel") < 2000 then
+			minetest.chat_send_player(player:get_player_name(),
+					"Not enough fuel.")
+		elseif modstorage:get_int("story_idx") < 5 then
+			minetest.chat_send_player(player:get_player_name(),
+					"No, you stay here. You have to search for the secrets of the blackboxes.")
+		else
+			minetest.kick_player(player:get_player_name(), "Well done!")
+		end
+	end
+
 	if fields.leave then
 		dssssa_ship.out_of_ship(player)
 	end
@@ -375,6 +391,23 @@ function dssssa_player.add_waypoints(player)
 				number = 0xF41616,
 				world_pos = dssssa_mapgen.blackbox_poss[1],
 			}))}
+	elseif story_idx == 4 then
+		dssssa_player.hud_blackboxes = {
+			assert(player:hud_add({
+				hud_elem_type = "waypoint",
+				name = "blackbox2",
+				text = "Blackbox",
+				number = 0xF41616,
+				world_pos = dssssa_mapgen.blackbox_poss[2],
+			})),
+			assert(player:hud_add({
+				hud_elem_type = "waypoint",
+				name = "blackbox3",
+				text = "Blackbox",
+				number = 0xF41616,
+				world_pos = dssssa_mapgen.blackbox_poss[3],
+			})),
+		}
 	end
 end
 
@@ -386,4 +419,34 @@ function dssssa_player.remove_waypoints(player)
 		player:hud_remove(id)
 	end
 	dssssa_player.hud_blackboxes = {}
+end
+
+function dssssa_player.into_ship_hook(player)
+	local inv = minetest.get_inventory({type="player", name="singleplayer"})
+
+	if modstorage:get_int("story_idx") == 3
+			and inv:contains_item("main", "dssssa_rocks:blackbox") then
+		modstorage:set_int("story_idx", 4)
+
+		dssssa_player.set_inventory_formspec(player)
+
+		if dssssa_player.is_in_ship then
+			minetest.show_formspec(player:get_player_name(), "inv", player:get_inventory_formspec())
+
+			dssssa_player.add_waypoints(player)
+		end
+	end
+
+	if modstorage:get_int("story_idx") == 4
+			and inv:contains_item("main", "dssssa_rocks:blackbox 3") then
+		modstorage:set_int("story_idx", 5)
+
+		dssssa_player.set_inventory_formspec(player)
+
+		if dssssa_player.is_in_ship then
+			minetest.show_formspec(player:get_player_name(), "inv", player:get_inventory_formspec())
+
+			dssssa_player.add_waypoints(player)
+		end
+	end
 end
