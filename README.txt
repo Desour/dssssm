@@ -5,6 +5,10 @@ Made by DS and cx384.
 
 For the 2022 Minetest GAME JAM.
 
+This is not a finished game so don't expect too much.
+
+A hint if you actually want to play this game. Don't put your rocks into the GPU, it is a wast of rocks. Instead gather all 8 types of different rocks and put them at the same time into your CPU. I think this could work, maybe. Oh and don't forget to toggle your handbreak.
+
 ## License
 
 ### Code
