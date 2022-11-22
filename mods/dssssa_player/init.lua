@@ -39,20 +39,20 @@ detected the signal of a blackbox. I should investigate this.
 ]],
 [[
 Logbook of the captain, startime today (2):
-I've brought the blackbox to my ship, however it is heavily damaged. According to
-the blackbox's manual (I've found them in my ship's database), the information is
-stored redundantly on multiple blackboxes, so I should be able to reconstruct most
-of the data if I find more blackboxes. My sensors already detected two more.
+I've brought the blackbox to my ship, however it is heavily damaged. According
+to the blackbox's manual (I've found them in my ship's database), the information
+is stored redundantly on multiple blackboxes, so I should be able to reconstruct
+most of the data if I find more blackboxes. My sensors already detected two more.
 ]],
 [[
 Logbook of the captain, startime today (3):
 I have found a total of three blackboxes.
 The stored information is alarming. It says that some cult, which calls itself
-"those that seek the approval of Krock, the core devourer" came to Giesela 235 C
-and demanded the scientists to praise their god. The scientists refused. Some
-days later a gigantic monster that looked like a crocodile arrived in the system,
-flew to the planet and cracked it like a nutcracker, it then sucked up the whole
-core.
+"those that seek the approval of Krock, the core devourer" came to
+Giesela 235 C and demanded the scientists to praise their god. The scientists
+refused. Some days later a gigantic monster that looked like a crocodile arrived
+in the system, flew to the planet and cracked it like a nutcracker, it then
+sucked up the whole planet's core.
 I have to warn the other planets nearby about my findings! I hope they'll believe
 me.
 ]],
@@ -191,6 +191,7 @@ function dssssa_player.set_inventory_formspec(player)
 			fs = fs
 				.."button[4,4;3,0.75;handbreak;Toggle handbreak]"
 				.."button_exit[4,6;3,0.75;leave;Leave ship]"
+				.."button_exit[4,8;3,0.75;jump;Jump]"
 		--~ elseif dssssa_player.current_inv_tab == 7 then -- Ship-AI
 			--~ fs = fs
 		else
@@ -391,8 +392,8 @@ function dssssa_player.add_waypoints(player)
 	if story_idx == 3 then
 		dssssa_player.hud_blackboxes = {assert(player:hud_add({
 				hud_elem_type = "waypoint",
-				name = "blackbox1",
-				text = "Blackbox",
+				name = "Blackbox",
+				text = "",
 				number = 0xF41616,
 				world_pos = dssssa_mapgen.blackbox_poss[1],
 			}))}
@@ -400,15 +401,15 @@ function dssssa_player.add_waypoints(player)
 		dssssa_player.hud_blackboxes = {
 			assert(player:hud_add({
 				hud_elem_type = "waypoint",
-				name = "blackbox2",
-				text = "Blackbox",
+				name = "Blackbox",
+				text = "",
 				number = 0xF41616,
 				world_pos = dssssa_mapgen.blackbox_poss[2],
 			})),
 			assert(player:hud_add({
 				hud_elem_type = "waypoint",
-				name = "blackbox3",
-				text = "Blackbox",
+				name = "Blackbox",
+				text = "",
 				number = 0xF41616,
 				world_pos = dssssa_mapgen.blackbox_poss[3],
 			})),

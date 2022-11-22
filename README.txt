@@ -24,6 +24,9 @@ MIT (Expat) by DS and cx384
 * `mods/dssssa_rocks/textures/dssssa_rocks_rock*`:
   by cx384 (CC-BY-SA-4.0)
 
+* blackbox and gravel mix in `mods/dssssa_rocks/textures/`:
+  by DS (CC-BY-SA-4.0)
+
 * model and textures in `mods/dssssa_ship`:
   by DS (CC-BY-SA-4.0)
 
