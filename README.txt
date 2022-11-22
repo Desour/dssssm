@@ -17,7 +17,8 @@ MIT (Expat) by DS and cx384
   by Westbeam (WTFPL) (or based on their art, with trivial changes)
   https://opengameart.org/content/space-skybox-0
 
-* `mods/dssssm_crafting/textures/*`: by cx384 (CC-BY-SA-4.0)
+* drill2 stuff in `mods/dssssm_crafting/textures/*`: by cx384 with modification by DS (both CC-BY-SA-4.0)
+* everything else in `mods/dssssm_crafting/textures/*`: by cx384 (CC-BY-SA-4.0)
 
 * `mods/dssssa_rocks/textures/dssssa_rocks_rock*`:
   by cx384 (CC-BY-SA-4.0)

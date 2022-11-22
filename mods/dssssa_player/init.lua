@@ -191,7 +191,7 @@ function dssssa_player.set_inventory_formspec(player)
 			fs = fs
 				.."button[4,4;3,0.75;handbreak;Toggle handbreak]"
 				.."button_exit[4,6;3,0.75;leave;Leave ship]"
-				.."button_exit[4,8;3,0.75;jump;Jump]"
+				.."button[4,8;3,0.75;jump;Jump]"
 		--~ elseif dssssa_player.current_inv_tab == 7 then -- Ship-AI
 			--~ fs = fs
 		else

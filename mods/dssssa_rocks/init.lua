@@ -103,7 +103,7 @@ minetest.register_craftitem("dssssa_rocks:gravel", {
 minetest.register_craftitem("dssssa_rocks:drill", {
 	description = "broken Drill\nIt looks like someone (you!) didn't know how to use a drill, and just bonked it against stone as if it was hammer.",
 	groups = {},
-	inventory_image = "dssssa_crafting_drill.png",
+	inventory_image = "dssssa_crafting_drill2.png",
 })
 
 minetest.register_craftitem("dssssa_rocks:stick", {
@@ -115,7 +115,7 @@ minetest.register_craftitem("dssssa_rocks:stick", {
 minetest.register_tool("dssssa_rocks:drill_on_stick", {
 	description = "Drill on a Stick",
 	groups = {},
-	inventory_image = "dssssa_crafting_drill_stick.png",
+	inventory_image = "dssssa_crafting_drill_stick2.png",
 	tool_capabilities = {
 		full_punch_interval = 1.0,
 		max_drop_level = 0,
