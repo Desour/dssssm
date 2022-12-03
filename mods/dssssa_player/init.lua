@@ -68,7 +68,7 @@ function dssssa_player.get_logbook_text()
 end
 
 minetest.register_on_joinplayer(function(player)
-	local inv = minetest.get_inventory({type="player", name=player:get_player_name()})
+	local inv = player:get_inventory()
 	inv:set_size("gpu_in", 6)
 	inv:set_size("gpu_out", 6)
 	local meta = player:get_meta()
@@ -127,7 +127,6 @@ minetest.register_on_joinplayer(function(player)
 		dssssa_ship.ship = assert(minetest.add_entity(player:get_pos(), "dssssa_ship:ship")):get_luaentity()
 		dssssa_ship.into_ship(player)
 
-		local inv = player:get_inventory()
 		assert(inv:set_size("cpu_src", 3*4))
 		assert(inv:set_size("cpu_dst", 2*3))
 		assert(inv:set_size("gpu_src", 3*2))
@@ -207,7 +206,7 @@ function dssssa_player.set_inventory_formspec(player)
 	player:set_inventory_formspec(fs)
 end
 
-minetest.register_on_player_receive_fields(function(player, formname, fields)
+minetest.register_on_player_receive_fields(function(player, _formname, fields)
 	--~ minetest.log(formname)
 	--~ minetest.log(dump(fields))
 	local meta = player:get_meta()
@@ -278,7 +277,7 @@ minetest.register_globalstep(function(dtime)
 		local meta = player:get_meta()
 		local para = meta:get_int("gpu_para")
 		local process_failed = false
-		for i = 1, para, 1 do
+		for _i = 1, para, 1 do -- luacheck: ignore
 			local name
 			local res_all
 			for _, stack in ipairs(inv:get_list("gpu_in")) do
@@ -332,8 +331,18 @@ end)
 
 local cpu_time_accum = 0
 local gpu_time_accum = 0
+local times_inv_was_weirdly_nil = 0
 minetest.register_globalstep(function(dtime)
 	local inv = minetest.get_inventory({type="player", name="singleplayer"})
+
+	if not inv then -- for some reason this can sometimes happen
+		times_inv_was_weirdly_nil = times_inv_was_weirdly_nil + 1
+		if times_inv_was_weirdly_nil == 10 then
+			minetest.log("warning",
+					"minetest.get_inventory keeps failing for some unknown reason, CPU and GPU are probably broken.")
+		end
+		return
+	end
 
 	cpu_time_accum = cpu_time_accum + dtime
 	gpu_time_accum = gpu_time_accum + dtime
